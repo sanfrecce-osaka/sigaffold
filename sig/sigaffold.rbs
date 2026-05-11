@@ -1,4 +1,7 @@
 module Sigaffold
   VERSION: String
-  # See the writing guide of rbs: https://github.com/ruby/rbs#guides
+
+  module AppDetector
+    def self.detect: (?String path) -> (:gem | :rails | :other)
+  end
 end
