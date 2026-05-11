@@ -4,4 +4,11 @@ module Sigaffold
   module AppDetector
     def self.detect: (?String path) -> (:gem | :rails | :other)
   end
+
+  class RbsIntroducer
+    type confirmer = ^(String) -> bool
+
+    def initialize: (?path: String, ?confirmer: confirmer?) -> void
+    def run: () -> void
+  end
 end
