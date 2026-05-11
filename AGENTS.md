@@ -2,6 +2,10 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Project Overview
+
+sigaffold is a Ruby gem that aims to remove the barriers to introducing type definitions and type checking into Ruby applications. It provides scaffolding features to make it easier to adopt RBS type definitions and type checking tools such as Steep and TypeProf.
+
 ## Commands
 
 ```bash
