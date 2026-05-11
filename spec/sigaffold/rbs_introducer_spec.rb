@@ -1,12 +1,8 @@
 # frozen_string_literal: true
 
-require "fileutils"
-require "tmpdir"
+RSpec.describe Sigaffold::RbsIntroducer, type: :aruba do
+  subject(:introducer) { described_class.new(path: expand_path("."), confirmer: confirmer) }
 
-RSpec.describe Sigaffold::RbsIntroducer do
-  subject(:introducer) { described_class.new(path: path, confirmer: confirmer) }
-
-  let(:path) { Dir.mktmpdir }
   let(:confirmer) { ->(_cmd) { false } }
   let(:prepare_files) { nil }
 
@@ -14,7 +10,6 @@ RSpec.describe Sigaffold::RbsIntroducer do
     prepare_files
     allow(introducer).to receive(:execute)
   end
-  after { FileUtils.rm_rf(path) }
 
   describe "#run" do
     describe "bundle add rbs" do
@@ -27,8 +22,7 @@ RSpec.describe Sigaffold::RbsIntroducer do
 
       context "when app is Rails" do
         let(:prepare_files) do
-          FileUtils.mkdir_p(File.join(path, "config"))
-          File.write(File.join(path, "config", "application.rb"), "class Application < Rails::Application; end\n")
+          write_file("config/application.rb", "class Application < Rails::Application; end\n")
         end
 
         it "runs bundle add rbs with development and test groups" do
@@ -78,27 +72,26 @@ RSpec.describe Sigaffold::RbsIntroducer do
       context "when .gitignore does not exist" do
         it "creates .gitignore containing .gem_rbs_collection" do
           introducer.run
-          expect(File.read(File.join(path, ".gitignore"))).to include(".gem_rbs_collection")
+          expect(".gitignore").to have_file_content(include(".gem_rbs_collection"))
         end
       end
 
       context "when .gitignore exists but does not contain .gem_rbs_collection" do
-        before { File.write(File.join(path, ".gitignore"), "*.log\n") }
+        before { write_file(".gitignore", "*.log\n") }
 
         it "appends .gem_rbs_collection without removing existing entries" do
           introducer.run
-          content = File.read(File.join(path, ".gitignore"))
-          expect(content).to include(".gem_rbs_collection")
-          expect(content).to include("*.log")
+          expect(".gitignore").to have_file_content(include(".gem_rbs_collection"))
+          expect(".gitignore").to have_file_content(include("*.log"))
         end
       end
 
       context "when .gitignore already contains .gem_rbs_collection" do
-        before { File.write(File.join(path, ".gitignore"), ".gem_rbs_collection\n") }
+        before { write_file(".gitignore", ".gem_rbs_collection\n") }
 
         it "does not duplicate the entry" do
           introducer.run
-          count = File.read(File.join(path, ".gitignore")).scan(".gem_rbs_collection").length
+          count = read(".gitignore").count { |line| line.strip == ".gem_rbs_collection" }
           expect(count).to eq(1)
         end
       end

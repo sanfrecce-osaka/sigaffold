@@ -1,17 +1,11 @@
 # frozen_string_literal: true
 
-require "fileutils"
-require "tmpdir"
-
-RSpec.describe Sigaffold::AppDetector do
+RSpec.describe Sigaffold::AppDetector, type: :aruba do
   describe ".detect" do
-    subject(:result) { described_class.detect(path) }
+    subject(:result) { described_class.detect(expand_path(".")) }
 
     context "when .gemspec exists" do
-      let(:path) { Dir.mktmpdir }
-
-      before { FileUtils.touch(File.join(path, "my_gem.gemspec")) }
-      after { FileUtils.rm_rf(path) }
+      before { touch("my_gem.gemspec") }
 
       it "returns :gem" do
         expect(result).to eq(:gem)
@@ -19,11 +13,8 @@ RSpec.describe Sigaffold::AppDetector do
     end
 
     context "when config/application.rb contains Rails::Application" do
-      let(:path) { Dir.mktmpdir }
-
       before do
-        FileUtils.mkdir_p(File.join(path, "config"))
-        File.write(File.join(path, "config", "application.rb"), <<~RUBY)
+        write_file("config/application.rb", <<~RUBY)
           require_relative "boot"
           require "rails/all"
 
@@ -33,7 +24,6 @@ RSpec.describe Sigaffold::AppDetector do
           end
         RUBY
       end
-      after { FileUtils.rm_rf(path) }
 
       it "returns :rails" do
         expect(result).to eq(:rails)
@@ -41,13 +31,7 @@ RSpec.describe Sigaffold::AppDetector do
     end
 
     context "when config/application.rb exists but does not contain Rails::Application" do
-      let(:path) { Dir.mktmpdir }
-
-      before do
-        FileUtils.mkdir_p(File.join(path, "config"))
-        File.write(File.join(path, "config", "application.rb"), "# just a config file\n")
-      end
-      after { FileUtils.rm_rf(path) }
+      before { write_file("config/application.rb", "# just a config file\n") }
 
       it "returns :other" do
         expect(result).to eq(:other)
@@ -55,26 +39,16 @@ RSpec.describe Sigaffold::AppDetector do
     end
 
     context "when neither .gemspec nor config/application.rb exists" do
-      let(:path) { Dir.mktmpdir }
-
-      after { FileUtils.rm_rf(path) }
-
       it "returns :other" do
         expect(result).to eq(:other)
       end
     end
 
     context "when both .gemspec and config/application.rb with Rails::Application exist" do
-      let(:path) { Dir.mktmpdir }
-
       before do
-        FileUtils.touch(File.join(path, "my_gem.gemspec"))
-        FileUtils.mkdir_p(File.join(path, "config"))
-        File.write(File.join(path, "config", "application.rb"), <<~RUBY)
-          class Application < Rails::Application; end
-        RUBY
+        touch("my_gem.gemspec")
+        write_file("config/application.rb", "class Application < Rails::Application; end\n")
       end
-      after { FileUtils.rm_rf(path) }
 
       it "prefers :gem over :rails" do
         expect(result).to eq(:gem)
