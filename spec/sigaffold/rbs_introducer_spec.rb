@@ -3,7 +3,7 @@
 RSpec.describe Sigaffold::RbsIntroducer, type: :aruba do
   subject(:introducer) { described_class.new(path: expand_path("."), confirmer: confirmer) }
 
-  let(:confirmer) { ->(_cmd) { false } }
+  let(:confirmer) { ->(_cmd) { "n" } }
   let(:prepare_files) { nil }
 
   before do
@@ -34,7 +34,7 @@ RSpec.describe Sigaffold::RbsIntroducer, type: :aruba do
 
     describe "bundle install" do
       context "when confirmer approves" do
-        let(:confirmer) { ->(cmd) { cmd == "bundle install" } }
+        let(:confirmer) { ->(cmd) { cmd == "bundle install" ? "y" : "n" } }
 
         it "runs bundle install" do
           introducer.run
@@ -52,7 +52,7 @@ RSpec.describe Sigaffold::RbsIntroducer, type: :aruba do
 
     describe "bundle exec rbs collection init" do
       context "when confirmer approves" do
-        let(:confirmer) { ->(cmd) { cmd == "bundle exec rbs collection init" } }
+        let(:confirmer) { ->(cmd) { cmd == "bundle exec rbs collection init" ? "y" : "n" } }
 
         it "runs rbs collection init" do
           introducer.run
@@ -99,7 +99,7 @@ RSpec.describe Sigaffold::RbsIntroducer, type: :aruba do
 
     describe "bundle exec rbs collection install" do
       context "when confirmer approves" do
-        let(:confirmer) { ->(cmd) { cmd == "bundle exec rbs collection install" } }
+        let(:confirmer) { ->(cmd) { cmd == "bundle exec rbs collection install" ? "y" : "n" } }
 
         it "runs rbs collection install" do
           introducer.run

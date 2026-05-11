@@ -6,9 +6,9 @@ module Sigaffold
   end
 
   class RbsIntroducer
-    type confirmer = ^(String) -> bool
+    type confirmer = ^(String) -> String
 
-    def initialize: (?path: String, ?confirmer: confirmer?) -> void
+    def initialize: (?path: String, ?confirmer: confirmer) -> void
     def run: () -> void
   end
 end

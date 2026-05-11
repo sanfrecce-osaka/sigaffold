@@ -3,8 +3,12 @@
 module Sigaffold
   class RbsIntroducer
     GITIGNORE_ENTRY = ".gem_rbs_collection"
+    DEFAULT_CONFIRMER = ->(command) {
+      print "Run `#{command}`? [y/N]: "
+      $stdin.gets&.chomp&.downcase
+    }
 
-    def initialize(path: Dir.pwd, confirmer: nil)
+    def initialize(path: Dir.pwd, confirmer: DEFAULT_CONFIRMER)
       @path = path
       @app_type = AppDetector.detect(path)
       @confirmer = confirmer
@@ -44,14 +48,7 @@ module Sigaffold
     end
 
     def confirmed?(command)
-      return @confirmer.call(command) if @confirmer
-
-      interactive_confirm(command)
-    end
-
-    def interactive_confirm(command)
-      print "Run `#{command}`? [y/N]: "
-      $stdin.gets&.chomp&.downcase == "y"
+      @confirmer.call(command) == "y"
     end
 
     def execute(command)
