@@ -26,9 +26,9 @@ module Sigaffold
 
     def add_rbs_gem
       if @app_type == :rails
-        execute("bundle add rbs --skip-install --group development,test")
+        confirm_and_run("bundle add rbs --skip-install --group development,test")
       else
-        execute("bundle add rbs --skip-install")
+        confirm_and_run("bundle add rbs --skip-install")
       end
     end
 

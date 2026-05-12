@@ -14,9 +14,20 @@ RSpec.describe Sigaffold::RbsIntroducer, type: :aruba do
   describe "#run" do
     describe "bundle add rbs" do
       context "when app is not Rails" do
-        it "runs bundle add rbs without group" do
-          introducer.run
-          expect(introducer).to have_received(:execute).with("bundle add rbs --skip-install")
+        context "when confirmer approves" do
+          let(:confirmer) { ->(_cmd) { "y" } }
+
+          it "runs bundle add rbs without group" do
+            introducer.run
+            expect(introducer).to have_received(:execute).with("bundle add rbs --skip-install")
+          end
+        end
+
+        context "when confirmer denies" do
+          it "does not run bundle add rbs" do
+            introducer.run
+            expect(introducer).not_to have_received(:execute).with("bundle add rbs --skip-install")
+          end
         end
       end
 
