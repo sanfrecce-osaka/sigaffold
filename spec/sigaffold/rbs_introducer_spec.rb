@@ -25,16 +25,27 @@ RSpec.describe Sigaffold::RbsIntroducer, type: :aruba do
           write_file("config/application.rb", "class Application < Rails::Application; end\n")
         end
 
-        it "runs bundle add rbs with development and test groups" do
-          introducer.run
-          expect(introducer).to have_received(:execute).with("bundle add rbs --skip-install --group development,test")
+        context "when confirmer approves" do
+          let(:confirmer) { ->(_cmd) { "y" } }
+
+          it "runs bundle add rbs with development and test groups" do
+            introducer.run
+            expect(introducer).to have_received(:execute).with("bundle add rbs --skip-install --group development,test")
+          end
+        end
+
+        context "when confirmer denies" do
+          it "does not run bundle add rbs" do
+            introducer.run
+            expect(introducer).not_to have_received(:execute).with("bundle add rbs --skip-install --group development,test")
+          end
         end
       end
     end
 
     describe "bundle install" do
       context "when confirmer approves" do
-        let(:confirmer) { ->(cmd) { cmd == "bundle install" ? "y" : "n" } }
+        let(:confirmer) { ->(_cmd) { "y" } }
 
         it "runs bundle install" do
           introducer.run
@@ -52,7 +63,7 @@ RSpec.describe Sigaffold::RbsIntroducer, type: :aruba do
 
     describe "bundle exec rbs collection init" do
       context "when confirmer approves" do
-        let(:confirmer) { ->(cmd) { cmd == "bundle exec rbs collection init" ? "y" : "n" } }
+        let(:confirmer) { ->(_cmd) { "y" } }
 
         it "runs rbs collection init" do
           introducer.run
@@ -99,7 +110,7 @@ RSpec.describe Sigaffold::RbsIntroducer, type: :aruba do
 
     describe "bundle exec rbs collection install" do
       context "when confirmer approves" do
-        let(:confirmer) { ->(cmd) { cmd == "bundle exec rbs collection install" ? "y" : "n" } }
+        let(:confirmer) { ->(_cmd) { "y" } }
 
         it "runs rbs collection install" do
           introducer.run
