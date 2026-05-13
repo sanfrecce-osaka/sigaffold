@@ -12,48 +12,6 @@ RSpec.describe Sigaffold::RbsTraceIntroducer, type: :aruba do
   end
 
   describe "#run" do
-    describe "bundle add rbs-inline" do
-      context "when app is not Rails" do
-        context "when confirmer approves" do
-          let(:confirmer) { ->(_cmd) { "y" } }
-
-          it "runs bundle add rbs-inline without group" do
-            introducer.run
-            expect(introducer).to have_received(:execute).with("bundle add rbs-inline --skip-install --require false")
-          end
-        end
-
-        context "when confirmer denies" do
-          it "does not run bundle add rbs-inline" do
-            introducer.run
-            expect(introducer).not_to have_received(:execute).with("bundle add rbs-inline --skip-install --require false")
-          end
-        end
-      end
-
-      context "when app is Rails" do
-        let(:prepare_files) do
-          write_file("config/application.rb", "class Application < Rails::Application; end\n")
-        end
-
-        context "when confirmer approves" do
-          let(:confirmer) { ->(_cmd) { "y" } }
-
-          it "runs bundle add rbs-inline with development and test groups" do
-            introducer.run
-            expect(introducer).to have_received(:execute).with("bundle add rbs-inline --skip-install --group development,test --require false")
-          end
-        end
-
-        context "when confirmer denies" do
-          it "does not run bundle add rbs-inline" do
-            introducer.run
-            expect(introducer).not_to have_received(:execute).with("bundle add rbs-inline --skip-install --group development,test --require false")
-          end
-        end
-      end
-    end
-
     describe "bundle add rbs-trace" do
       context "when app is not Rails" do
         context "when confirmer approves" do

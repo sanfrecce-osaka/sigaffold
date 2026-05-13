@@ -36,21 +36,12 @@ module Sigaffold
     end
 
     def run
-      add_rbs_inline_gem
       add_rbs_trace_gem
       confirm_and_run("bundle install")
       add_rbs_trace_config
     end
 
     private
-
-    def add_rbs_inline_gem
-      if @app_type == :rails
-        confirm_and_run("bundle add rbs-inline --skip-install --group development,test --require false")
-      else
-        confirm_and_run("bundle add rbs-inline --skip-install --require false")
-      end
-    end
 
     def add_rbs_trace_gem
       if @app_type == :rails
