@@ -140,6 +140,10 @@ RSpec.describe Sigaffold::RbsTraceIntroducer, type: :aruba do
                 config.after(:suite) do
                   trace.disable
                   trace.save_comments(:rbs_colon)
+                  out_dir = "tmp/sig-#{ENV.fetch('TEST_ENV_NUMBER'}', '0')}"
+                  warn "[RBS_TRACE] saving to #{out_dir}"
+                  trace.save_files(out_dir:)
+                  warn '[RBS_TRACE] saved'
                 end
               end
             end
@@ -169,6 +173,10 @@ RSpec.describe Sigaffold::RbsTraceIntroducer, type: :aruba do
                 config.after(:suite) do
                   trace.disable
                   trace.save_comments(:rbs_colon)
+                  out_dir = "tmp/sig-#{ENV.fetch('TEST_ENV_NUMBER'}', '0')}"
+                  warn "[RBS_TRACE] saving to #{out_dir}"
+                  trace.save_files(out_dir:)
+                  warn '[RBS_TRACE] saved'
                 end
               end
             end
@@ -213,6 +221,10 @@ RSpec.describe Sigaffold::RbsTraceIntroducer, type: :aruba do
                   config.after(:suite) do
                     trace.disable
                     trace.save_comments(:rbs_colon)
+                    out_dir = "tmp/sig-#{ENV.fetch('TEST_ENV_NUMBER'}', '0')}"
+                    warn "[RBS_TRACE] saving to #{out_dir}"
+                    trace.save_files(out_dir:)
+                    warn '[RBS_TRACE] saved'
                   end
                 end
               end
@@ -242,6 +254,10 @@ RSpec.describe Sigaffold::RbsTraceIntroducer, type: :aruba do
                   config.after(:suite) do
                     trace.disable
                     trace.save_comments(:rbs_colon)
+                    out_dir = "tmp/sig-#{ENV.fetch('TEST_ENV_NUMBER'}', '0')}"
+                    warn "[RBS_TRACE] saving to #{out_dir}"
+                    trace.save_files(out_dir:)
+                    warn '[RBS_TRACE] saved'
                   end
                 end
               end
